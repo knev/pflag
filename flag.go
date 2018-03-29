@@ -304,7 +304,7 @@ func (f *FlagSet) PrintDefaults() {
 
 		name, usage := UnquoteUsage(flag)
 		if len(name) > 0 {
-			s += " " + name
+			s += "=" + name
 		}
 
 		s += "\n    \t"
