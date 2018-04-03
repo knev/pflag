@@ -297,9 +297,36 @@ func (f *FlagSet) PrintDefaults() {
 	f.VisitAll(func(flag *Flag) {
 		s := ""
 		if len(flag.Shorthand) > 0 {
-			s = fmt.Sprintf("  -%s, --%s", flag.Shorthand, flag.Name)
+			// s = fmt.Sprintf("  -%s, --%s", flag.Shorthand, flag.Name)
+			return
 		} else {
 			s = fmt.Sprintf("  --%s", flag.Name)
+		}
+
+		name, usage := UnquoteUsage(flag)
+		if len(name) > 0 {
+			s += "=" + name
+		}
+
+		s += "\n    \t"
+		s += usage
+		if !isZeroValue(flag.DefValue) {
+			if _, ok := flag.Value.(*stringValue); ok {
+				// put quotes on the value
+				s += fmt.Sprintf(" (default %q)", flag.DefValue)
+			} else {
+				s += fmt.Sprintf(" (default %v)", flag.DefValue)
+			}
+		}
+		fmt.Fprint(f.out(), s, "\n")
+	})
+	f.VisitAll(func(flag *Flag) {
+		s := ""
+		if len(flag.Shorthand) > 0 {
+			s = fmt.Sprintf("  -%s, --%s", flag.Shorthand, flag.Name)
+		} else {
+			// s = fmt.Sprintf("  --%s", flag.Name)
+			return
 		}
 
 		name, usage := UnquoteUsage(flag)
